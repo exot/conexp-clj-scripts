@@ -1,23 +1,30 @@
 (use 'conexp.main)
-
-;;;
-
 (require '[conexp.contrib.exec :as exec])
 (require '[clojure.java.io :as io])
 (import  '[java.util Calendar])
 (import  '[java.text SimpleDateFormat])
 
+;;;
+
+(.mkdir (java.io.File. "data"))
+
+(defn generic-file-name
+  "Generates some file name based on the current date"
+  []
+  (let [^Calendar cal (Calendar/getInstance)
+        ^SimpleDateFormat sdf (SimpleDateFormat. "'data/'yyyy-MM-dd'T'HH:mm:ssz'.dat'")]
+    (.format sdf (.getTime cal))))
+
 (defn points-to-file
-  "Puts points into a temporary file and return the resulting file-name.  The resulting
-  file is suitable for gnuplot to be used as a data file."
-  [points]
-  (let [file-name (let [^Calendar cal (Calendar/getInstance)
-                        ^SimpleDateFormat sdf (SimpleDateFormat. "'data/'yyyy-MM-dd'T'HH:mm:ssz'.dat'")]
-                    (.format sdf (.getTime cal)))]
-    (with-open [^java.io.Writer out (io/writer file-name)]
-      (doseq [point points]
-        (.write out (str (nth point 0) " " (nth point 1) "\n"))))
-    file-name))
+  "Puts points into a file and return the resulting file-name.  The resulting file is
+  suitable for gnuplot to be used as a data file."
+  ([points]
+     (points-to-file points (generic-file-name)))
+  ([points file-name]
+     (with-open [^java.io.Writer out (io/writer file-name)]
+       (doseq [point points]
+         (.write out (str (nth point 0) " " (nth point 1) "\n"))))
+     file-name))
 
 (defn plot-points-from-file
   "Given a file-name that is assumed to be a data file suitable for gnuplot, generate a
@@ -54,13 +61,13 @@
   these random contexts, the number of intents and pseudo-intents are computed and then
   displayed."
   [no-samples random-context-fn]
-  (-> (r/fold concat
-              (fn [coll _]
-                (conj coll (reduce-context (random-context-fn))))
-              (vec (range no-samples)))
-      compute-stegosaurus-points
-      points-to-file
-      plot-points-from-file))
+  (->> (r/fold concat
+               (fn [coll _]
+                 (conj coll (reduce-context (random-context-fn))))
+               (vec (range no-samples)))
+       compute-stegosaurus-points
+       points-to-file
+       plot-points-from-file))
 
 ;;;
 
