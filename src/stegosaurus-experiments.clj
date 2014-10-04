@@ -12,7 +12,7 @@
   file is suitable for gnuplot to be used as a data file."
   [points]
   (let [file-name (let [^Calendar cal (Calendar/getInstance)
-                        ^SimpleDateFormat sdf (SimpleDateFormat. "yyyy-MM-dd'T'HH:mm:ssz'.dat'")]
+                        ^SimpleDateFormat sdf (SimpleDateFormat. "'data/'yyyy-MM-dd'T'HH:mm:ssz'.dat'")]
                     (.format sdf (.getTime cal)))]
     (with-open [^java.io.Writer out (io/writer file-name)]
       (doseq [point points]
