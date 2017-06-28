@@ -40,8 +40,8 @@
   "For a formal concept [x y] of the formal context `ctx', returns all
   protoconcepts [a b] such that a' = x and b' = y."
   [ctx [x y]]
-  (let [x-generators (generators #(= (odprime ctx %) x) x)
-        y-generators (generators #(= (adprime ctx %) y) y)]
+  (let [x-generators (distinct (generators #(= (odprime ctx %) x) x))
+        y-generators (distinct (generators #(= (adprime ctx %) y) y))]
     (cross-product x-generators y-generators)))
 
 (defn- generators
@@ -61,7 +61,7 @@
                                  [fire dry] [fire warm]}))
 
 (deftest test-generators
-  (is (= 50 (count (generators #(>= (count %) 5) #{1 2 3 4 5 6 7})))))
+  (is (= 29 (count (distinct (generators #(>= (count %) 5) #{1 2 3 4 5 6 7}))))))
 
 (deftest test-protoconcepts
   (is (= 22 (count (protoconcepts four-elements)))))
