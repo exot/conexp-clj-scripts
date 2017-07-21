@@ -10,6 +10,7 @@
   "Add functionality for protoconcepts to conexp-clj."
   (:require [clojure.core :refer [set?]]
             [clojure.set :refer [subset?]]
+            [clojure.test :refer [deftest is]]
             [conexp.base :refer [cross-product]]
             [conexp.fca.contexts
              :refer
