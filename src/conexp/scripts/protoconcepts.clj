@@ -14,8 +14,8 @@
             [conexp.base :refer [cross-product]]
             [conexp.fca.contexts
              :refer
-             [adprime attributes concepts make-context objects oprime
-              odprime]]))
+             [adprime attributes concepts make-context objects odprime oprime]]
+            [conexp.fca.lattices :refer [make-lattice-nc]]))
 
 (defn protoconcept?
   "Test whether [x y] is a protoconcept of the formal context `ctx'."
@@ -68,3 +68,15 @@
   (is (= 22 (count (protoconcepts four-elements)))))
 
 ;; TODO: generate layout for poset (ignore fact that it is a lattice!)
+
+;; first make it into a lattice
+
+(defn protoconcept-poset
+  "Return ordered set of all protoconcepts of the given formal context."
+  [ctx]
+  (make-lattice-nc (protoconcepts ctx)
+                   (fn [[a₁ b₁] [a₂ b₂]]
+                     (and (subset? a₁ a₂)
+                          (subset? b₂ b₁)))))
+
+;; now try and hope we can make it into a layout
